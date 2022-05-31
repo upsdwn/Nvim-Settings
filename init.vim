@@ -12,22 +12,21 @@ set autoindent
 set fileformat=unix
 filetype indent on      " load filetype-specific indent files
 
-set lcs+=space:·,tab:\|\  " Настройка отображения невидимых символов
+set clipboard=unnamedplus
+set lcs+=space:·  " Настройка отображения невидимых символов
 set list  " Вкл. отображение невидимых символов
+set splitbelow " new horizontal splits are on the bottom
+set splitright " new vertical splits are on the right
 
 call plug#begin('~/.vim/plugged')
-
 Plug 'neovim/nvim-lspconfig'
 Plug 'hrsh7th/nvim-cmp'
 Plug 'hrsh7th/cmp-nvim-lsp'
 Plug 'saadparwaiz1/cmp_luasnip'
 Plug 'L3MON4D3/LuaSnip'
-
-
+Plug 'preservim/nerdtree'
 " color schemas
-" Plug 'morhetz/gruvbox'  " colorscheme gruvbox
 Plug 'Mofiqul/vscode.nvim'
-
 call plug#end()
 
 " For dark theme (neovim's default)
@@ -40,27 +39,18 @@ let g:vscode_italic_comment = 1
 let g:vscode_disable_nvimtree_bg = v:true
 colorscheme vscode
 
-" colorscheme OceanicNext
-"let g:material_terminal_italics = 1
-" variants: default, palenight, ocean, lighter, darker, default-community,
-"           palenight-community, ocean-community, lighter-community,
-"           darker-community
-"let g:material_theme_style = 'darker'
-"colorscheme material
 if (has('termguicolors'))
   set termguicolors
 endif
-
-" variants: mirage, dark, dark
-"let ayucolor="mirage"
-"colorscheme ayu
-
 
 
 " turn off search highlight
 nnoremap ,<space> :nohlsearch<CR>
 
 
+"nnoremap <leader>n :NERDTreeFocus<CR>
+nnoremap <silent> <special> <C-t> :NERDTreeToggle <Bar> if &filetype ==# 'nerdtree' <Bar> wincmd p <Bar> endif<CR>
+nnoremap <C-f> :NERDTreeFind<CR>
 
 lua << EOF
 -- Set completeopt to have a better completion experience
@@ -72,9 +62,6 @@ local luasnip = require 'luasnip'
 -- nvim-cmp setup
 local cmp = require 'cmp'
 cmp.setup {
-  completion = {
-    autocomplete = false
-  },
   snippet = {
     expand = function(args)
       require('luasnip').lsp_expand(args.body)
@@ -116,9 +103,6 @@ cmp.setup {
   },
 }
 EOF
-
-
-
 
 lua << EOF
 local nvim_lsp = require('lspconfig')
