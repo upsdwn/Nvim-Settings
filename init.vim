@@ -1,12 +1,6 @@
-au BufNewFile,BufRead *.py
-    \ set tabstop=4
-    \ softtabstop=4
-    \ shiftwidth=4
-    \ textwidth=79
-    \ expandtab
-    \ autoindent
+au BufNewFile,BufRead *.py,*.json
+    \ set colorcolumn=79
     \ fileformat=unix
-    \ colorcolumn=79
 
 au BufNewFile,BufRead *.js, *.html, *.css, *.yaml
     \ set tabstop=2
@@ -35,6 +29,7 @@ set splitbelow " new horizontal splits are on the bottom
 set splitright " new vertical splits are on the right
 " set colorcolumn=79
 
+
 call plug#begin('~/.vim/plugged')
 Plug 'neovim/nvim-lspconfig'
 Plug 'hrsh7th/nvim-cmp'
@@ -42,8 +37,9 @@ Plug 'hrsh7th/cmp-nvim-lsp'
 Plug 'saadparwaiz1/cmp_luasnip'
 Plug 'L3MON4D3/LuaSnip'
 Plug 'preservim/nerdtree'
-" color schemas
-Plug 'Mofiqul/vscode.nvim'
+Plug 'Vimjas/vim-python-pep8-indent'
+Plug 'tyru/caw.vim' " For comments
+Plug 'Mofiqul/vscode.nvim' " color schema
 call plug#end()
 
 " For dark theme (neovim's default)
@@ -65,9 +61,9 @@ nnoremap <silent> <special> <C-t> :NERDTreeToggle <Bar> if &filetype ==# 'nerdtr
 nnoremap <C-f> :NERDTreeFind<CR>
 
 " Settings buffers keys
-map bn :bn<cr>
-map bp :bp<cr>
-map bw :bw<cr>
+map gn :bn<cr>
+map gp :bp<cr>
+map gw :bw<cr>
 
 lua << EOF
 -- luasnip setup
