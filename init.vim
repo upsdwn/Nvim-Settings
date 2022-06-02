@@ -15,7 +15,7 @@ filetype indent on      " load filetype-specific indent files
 
 set clipboard=unnamedplus
 " Show whitespaces
-set list listchars=tab:→\ ,nbsp:␣,trail:·,space:·,extends:⟩,precedes:⟨
+" set list listchars=tab:→\ ,nbsp:␣,trail:·,space:·,extends:⟩,precedes:⟨
 
 "set lcs+=space:·  " Настройка отображения невидимых символов
 "set list  " Вкл. отображение невидимых символов
