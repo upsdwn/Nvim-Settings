@@ -17,8 +17,8 @@ set clipboard=unnamedplus
 " Show whitespaces
 " set list listchars=tab:→\ ,nbsp:␣,trail:·,space:·,extends:⟩,precedes:⟨
 
-"set lcs+=space:·  " Настройка отображения невидимых символов
-"set list  " Вкл. отображение невидимых символов
+set lcs+=space:·  " Настройка отображения невидимых символов
+set list  " Вкл. отображение невидимых символов
 set splitbelow " new horizontal splits are on the bottom
 set splitright " new vertical splits are on the right
 
@@ -39,6 +39,7 @@ Plug 'preservim/nerdtree'
 Plug 'Vimjas/vim-python-pep8-indent'
 Plug 'tyru/caw.vim' " For comments
 Plug 'Mofiqul/vscode.nvim' " color schema
+" Using vim-plug
 call plug#end()
 
 " For dark theme (neovim's default)
@@ -61,6 +62,11 @@ nnoremap <C-f> :NERDTreeFind<CR>
 map gn :bn<cr>
 map gp :bp<cr>
 map gw :bw<cr>
+" bind ctrl move keys in insert mode
+inoremap <C-h> <Left>
+inoremap <C-j> <Down>
+inoremap <C-k> <Up>
+inoremap <C-l> <Right>
 
 lua << EOF
 -- luasnip setup
@@ -134,17 +140,25 @@ local on_attach = function(client, bufnr)
   vim.keymap.set('n', '<space>ca', vim.lsp.buf.code_action, bufopts)
   vim.keymap.set('n', 'gr', vim.lsp.buf.references, bufopts)
  -- vim.keymap.set('n', '<space>f', vim.lsp.buf.format, bufopts)
-  vim.keymap.set('n', '<space>i', function()
+  --[[vim.keymap.set('n', '<space>i', function()
     vim.lsp.buf.execute_command(
       {command='pyright.organizeimports', arguments={vim.uri_from_bufnr(0)}}
   ) 
+  end, bufopts)]]
+
+  vim.keymap.set('n', '<space>i', function()
+    vim.lsp.buf.execute_command(
+      {command='!isort % <cr>', arguments={vim.uri_from_bufnr(0)}}
+  ) 
   end, bufopts)
+--  vim.keymap.set('n', '<space>i', 'silent !isort % <cr>', bufopts)
 end
+
+
 
 -- Use a loop to conveniently call 'setup' on multiple servers and
 -- map buffer local keybindings when the language server attaches
-
-local servers = { 'pyright' }
+local servers = { 'pylsp' }
 for _, lsp in pairs(servers) do
   nvim_lsp[lsp].setup {
     on_attach = on_attach,
@@ -154,7 +168,6 @@ for _, lsp in pairs(servers) do
     }
   }
 end
-
 --[[
 local function organize_imports()
   local params = {
