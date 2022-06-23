@@ -17,6 +17,7 @@ set clipboard=unnamedplus
 " Show whitespaces
 " set list listchars=tab:→\ ,nbsp:␣,trail:·,space:·,extends:⟩,precedes:⟨
 
+set cursorline
 set lcs+=space:·  " Настройка отображения невидимых символов
 set list  " Вкл. отображение невидимых символов
 set splitbelow " new horizontal splits are on the bottom
@@ -38,6 +39,7 @@ Plug 'L3MON4D3/LuaSnip'
 Plug 'preservim/nerdtree'
 Plug 'Vimjas/vim-python-pep8-indent'
 Plug 'tyru/caw.vim' " For comments
+Plug 'akinsho/bufferline.nvim', { 'tag': 'v2.*' }
 Plug 'Mofiqul/vscode.nvim' " color schema
 " Using vim-plug
 call plug#end()
@@ -55,8 +57,11 @@ colorscheme vscode
 " turn off search highlight
 nnoremap ,<space> :nohlsearch<CR>
 " Settings NerdTree Plugin
+"nnoremap <leader>n :NERDTreeFocus<CR>
+"nnoremap <silent> <special> <C-t> :NERDTreeToggle <Bar> if &filetype ==# 'nerdtree' <Bar> wincmd p <Bar> endif<CR>
 nnoremap <leader>n :NERDTreeFocus<CR>
-nnoremap <silent> <special> <C-t> :NERDTreeToggle <Bar> if &filetype ==# 'nerdtree' <Bar> wincmd p <Bar> endif<CR>
+nnoremap <C-n> :NERDTree<CR>
+nnoremap <C-t> :NERDTreeToggle<CR>
 nnoremap <C-f> :NERDTreeFind<CR>
 " Settings buffers keys
 map gn :bn<cr>
@@ -67,6 +72,20 @@ inoremap <C-h> <Left>
 inoremap <C-j> <Down>
 inoremap <C-k> <Up>
 inoremap <C-l> <Right>
+
+set termguicolors
+lua << EOF
+require("bufferline").setup{
+    options = {
+        diagnostics = "nvim_lsp",
+        show_buffer_icons = true,
+        show_buffer_close_icons = false,
+        show_buffer_default_icon = true, -- whether or not an unrecognised filetype should show a default icon
+        show_close_icon = true,
+        show_tab_indicators = true
+    }
+}
+EOF
 
 lua << EOF
 -- luasnip setup
@@ -188,5 +207,5 @@ nvim_lsp.pyright.setup{
 EOF
 
 " run current script with python3 by CTRL+R in command and insert mode
-autocmd FileType python map <buffer> <C-r> :w<CR>:exec '!python3' shellescape(@%, 1)<CR>
-autocmd FileType python imap <buffer> <C-r> <esc>:w<CR>:exec '!python3' shellescape(@%, 1)<CR>
+autocmd FileType python map <buffer> <F5> :w<CR>:exec '!python3' shellescape(@%, 1)<CR>
+autocmd FileType python imap <buffer> <F5> <esc>:w<CR>:exec '!python3' shellescape(@%, 1)<CR>
