@@ -35,6 +35,7 @@ Plug 'hrsh7th/nvim-cmp'
 Plug 'hrsh7th/cmp-nvim-lsp'
 Plug 'saadparwaiz1/cmp_luasnip'
 Plug 'L3MON4D3/LuaSnip'
+Plug 'williamboman/nvim-lsp-installer'
 Plug 'preservim/nerdtree'
 Plug 'Vimjas/vim-python-pep8-indent'
 Plug 'tyru/caw.vim' " For comments
@@ -140,25 +141,17 @@ local on_attach = function(client, bufnr)
   vim.keymap.set('n', '<space>ca', vim.lsp.buf.code_action, bufopts)
   vim.keymap.set('n', 'gr', vim.lsp.buf.references, bufopts)
  -- vim.keymap.set('n', '<space>f', vim.lsp.buf.format, bufopts)
-  --[[vim.keymap.set('n', '<space>i', function()
-    vim.lsp.buf.execute_command(
-      {command='pyright.organizeimports', arguments={vim.uri_from_bufnr(0)}}
-  ) 
-  end, bufopts)]]
-
   vim.keymap.set('n', '<space>i', function()
     vim.lsp.buf.execute_command(
-      {command='!isort % <cr>', arguments={vim.uri_from_bufnr(0)}}
-  ) 
+      {command='pyright.organizeimports', arguments={vim.uri_from_bufnr(0)}}
+  )
   end, bufopts)
---  vim.keymap.set('n', '<space>i', 'silent !isort % <cr>', bufopts)
 end
 
-
-
+require("nvim-lsp-installer").setup {}
 -- Use a loop to conveniently call 'setup' on multiple servers and
 -- map buffer local keybindings when the language server attaches
-local servers = { 'pylsp' }
+local servers = { 'pyright' }
 for _, lsp in pairs(servers) do
   nvim_lsp[lsp].setup {
     on_attach = on_attach,
