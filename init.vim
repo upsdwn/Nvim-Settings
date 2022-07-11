@@ -40,6 +40,8 @@ Plug 'preservim/nerdtree'
 Plug 'Vimjas/vim-python-pep8-indent'
 Plug 'tyru/caw.vim' " For comments
 Plug 'Mofiqul/vscode.nvim' " color schema
+Plug 'sainnhe/edge'
+Plug 'lewis6991/gitsigns.nvim'
 " Using vim-plug
 call plug#end()
 
@@ -48,10 +50,10 @@ set background=dark
 " Enable transparent background
 " let g:vscode_transparency = 1
 " Enable italic comment
-let g:vscode_italic_comment = 1
+" let g:vscode_italic_comment = 1
 " Disable nvim-tree background color
-let g:vscode_disable_nvimtree_bg = v:true
-colorscheme vscode
+" let g:vscode_disable_nvimtree_bg = v:true
+colorscheme edge
 
 " turn off search highlight
 nnoremap ,<space> :nohlsearch<CR>
@@ -161,6 +163,8 @@ for _, lsp in pairs(servers) do
     }
   }
 end
+
+require('gitsigns').setup()
 --[[
 local function organize_imports()
   local params = {
@@ -183,3 +187,10 @@ EOF
 " run current script with python3 by CTRL+R in command and insert mode
 autocmd FileType python map <buffer> <C-r> :w<CR>:exec '!python3' shellescape(@%, 1)<CR>
 autocmd FileType python imap <buffer> <C-r> <esc>:w<CR>:exec '!python3' shellescape(@%, 1)<CR>
+
+set termguicolors
+
+hi DiagnosticError guifg=White
+hi DiagnosticWarn  guifg=White
+hi DiagnosticInfo  guifg=White
+hi DiagnosticHint  guifg=White
