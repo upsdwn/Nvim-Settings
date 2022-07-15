@@ -1,27 +1,24 @@
+" Basic configs
+set number
+set relativenumber
 set mouse=a  " enable mouse
+set nowrap
+set incsearch
 set encoding=utf-8
-" set number
-set rnu
 set noswapfile
-set scrolloff=5
-
+set scrolloff=8
 set tabstop=4
 set softtabstop=4
 set shiftwidth=4
 set expandtab
 set autoindent
 set fileformat=unix
-filetype indent on      " load filetype-specific indent files
-
 set clipboard=unnamedplus
-" Show whitespaces
-" set list listchars=tab:→\ ,nbsp:␣,trail:·,space:·,extends:⟩,precedes:⟨
-
-set cursorline
-set lcs+=space:·  " Настройка отображения невидимых символов
-set list  " Вкл. отображение невидимых символов
 set splitbelow " new horizontal splits are on the bottom
 set splitright " new vertical splits are on the right
+filetype indent on " load filetype-specific indent files
+let mapleader = " "
+syntax on
 
 au BufNewFile,BufRead *.py,*.json set colorcolumn=79
 au BufNewFile,BufRead *.js, *.html, *.css, *.yaml
@@ -30,6 +27,11 @@ au BufNewFile,BufRead *.js, *.html, *.css, *.yaml
     \ shiftwidth=2
     \ expandtab
 
+" run current script with python3 by CTRL+R in command and insert mode
+autocmd FileType python map <buffer> <F5> :w<CR>:exec '!python3' shellescape(@%, 1)<CR>
+autocmd FileType python imap <buffer> <F5> <esc>:w<CR>:exec '!python3' shellescape(@%, 1)<CR>
+
+" Plugins
 call plug#begin('~/.vim/plugged')
 Plug 'neovim/nvim-lspconfig'
 Plug 'hrsh7th/nvim-cmp'
@@ -40,28 +42,33 @@ Plug 'williamboman/nvim-lsp-installer'
 Plug 'preservim/nerdtree'
 Plug 'Vimjas/vim-python-pep8-indent'
 Plug 'tyru/caw.vim' " For comments
-Plug 'akinsho/bufferline.nvim', { 'tag': 'v2.*' }
-Plug 'Mofiqul/vscode.nvim' " color schema
-Plug 'sainnhe/edge'
-Plug 'lewis6991/gitsigns.nvim'
-" Using vim-plug
+Plug 'lewis6991/gitsigns.nvim' " For git
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+Plug 'junegunn/fzf.vim'
+Plug 'tomasiser/vim-code-dark' " Color schema
+Plug 'vim-airline/vim-airline' " Statusline
 call plug#end()
 
-" For dark theme (neovim's default)
-set background=dark
-" Enable transparent background
-" let g:vscode_transparency = 1
-" Enable italic comment
-" let g:vscode_italic_comment = 1
-" Disable nvim-tree background color
-" let g:vscode_disable_nvimtree_bg = v:true
-colorscheme edge
+
+" Airline
+let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#tabline#formatter = 'unique_tail'
+let g:airline_section_z = airline#section#create('%3p%% %#__accent_bold#%4l%#__restore__#%#__accent_bold#/%L%#__restore__# %3v')
+
+" Theme
+if (has("termguicolors"))
+  set termguicolors
+endif
+set noshowmode
+set cursorline
+set lcs+=space:·  " Настройка отображения невидимых символов
+set list  " Вкл. отображение невидимых символов
+let g:codedark_italics = 1 " Enable italic comment
+colorscheme codedark
 
 " turn off search highlight
 nnoremap ,<space> :nohlsearch<CR>
 " Settings NerdTree Plugin
-"nnoremap <leader>n :NERDTreeFocus<CR>
-"nnoremap <silent> <special> <C-t> :NERDTreeToggle <Bar> if &filetype ==# 'nerdtree' <Bar> wincmd p <Bar> endif<CR>
 nnoremap <leader>n :NERDTreeFocus<CR>
 nnoremap <C-n> :NERDTree<CR>
 nnoremap <C-t> :NERDTreeToggle<CR>
@@ -70,25 +77,19 @@ nnoremap <C-f> :NERDTreeFind<CR>
 map gn :bn<cr>
 map gp :bp<cr>
 map gw :bw<cr>
-" bind ctrl move keys in insert mode
-inoremap <C-h> <Left>
-inoremap <C-j> <Down>
-inoremap <C-k> <Up>
-inoremap <C-l> <Right>
+" Window navigation
+nmap <silent> <c-k> :wincmd k<CR>
+nmap <silent> <c-j> :wincmd j<CR>
+nmap <silent> <c-h> :wincmd h<CR>
+nmap <silent> <c-l> :wincmd l<CR>
+"
+" Fuzzy search files with fzf
+" Fzf maps
+map <Leader>ff :Files<CR>
+map <Leader>fb :BLines<CR>
+map <Leader>fa :Rg<CR>
+let g:fzf_layout = { 'down': '40%' }
 
-set termguicolors
-lua << EOF
-require("bufferline").setup{
-    options = {
-        diagnostics = "nvim_lsp",
-        show_buffer_icons = true,
-        show_buffer_close_icons = false,
-        show_buffer_default_icon = true, -- whether or not an unrecognised filetype should show a default icon
-        show_close_icon = true,
-        show_tab_indicators = true
-    }
-}
-EOF
 
 lua << EOF
 -- luasnip setup
@@ -106,7 +107,6 @@ cmp.setup {
     end
   },
   window = {
---    completion = cmp.config.window.bordered(),
     documentation = cmp.config.window.bordered(),
   },
   mapping = {
@@ -117,7 +117,7 @@ cmp.setup {
     ['<C-Space>'] = cmp.mapping.complete(),
     ['<C-e>'] = cmp.mapping.close(),
     ['<CR>'] = cmp.mapping.confirm {
-      behavior = cmp.ConfirmBehavior.Replace,
+      -- behavior = cmp.ConfirmBehavior.Replace,
       select = true,
     },
   },
@@ -126,9 +126,7 @@ cmp.setup {
     { name = 'luasnip' },
   },
 }
-EOF
 
-lua << EOF
 local nvim_lsp = require('lspconfig')
 -- Mappings.
 -- See `:help vim.diagnostic.*` for documentation on any of the below functions
@@ -172,7 +170,7 @@ end
 require("nvim-lsp-installer").setup {}
 -- Use a loop to conveniently call 'setup' on multiple servers and
 -- map buffer local keybindings when the language server attaches
-local servers = { 'pyright' }
+local servers = { 'pyright', 'pylsp' }
 for _, lsp in pairs(servers) do
   nvim_lsp[lsp].setup {
     on_attach = on_attach,
@@ -184,37 +182,4 @@ for _, lsp in pairs(servers) do
 end
 
 require('gitsigns').setup()
---[[
-local function organize_imports()
-  local params = {
-    command = 'pyright.organizeimports',
-    arguments = { vim.uri_from_bufnr(0) },
-  }
-  vim.lsp.buf.execute_command(params)
-end
-
-nvim_lsp.pyright.setup{
-  commands = {
-    PyrightOrganizeImports = {
-      organize_imports,
-      description = 'Organize Imports',
-    },
-  },
-}]]
 EOF
-
-" run current script with python3 by CTRL+R in command and insert mode
-<<<<<<< HEAD
-autocmd FileType python map <buffer> <C-r> :w<CR>:exec '!python3' shellescape(@%, 1)<CR>
-autocmd FileType python imap <buffer> <C-r> <esc>:w<CR>:exec '!python3' shellescape(@%, 1)<CR>
-
-set termguicolors
-
-hi DiagnosticError guifg=White
-hi DiagnosticWarn  guifg=White
-hi DiagnosticInfo  guifg=White
-hi DiagnosticHint  guifg=White
-=======
-autocmd FileType python map <buffer> <F5> :w<CR>:exec '!python3' shellescape(@%, 1)<CR>
-autocmd FileType python imap <buffer> <F5> <esc>:w<CR>:exec '!python3' shellescape(@%, 1)<CR>
->>>>>>> 71137e04339ee63e22b571dc3758fb40b33f562b
